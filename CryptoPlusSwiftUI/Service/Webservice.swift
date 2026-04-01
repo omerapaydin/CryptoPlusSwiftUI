@@ -15,7 +15,7 @@ class Webservice {
         let ( data, _ ) = try await URLSession.shared.data(from: url)
         let currencies = try JSONDecoder().decode([CyrptoCurrency].self, from: data)
         return currencies ?? []
-        
+         
     }
     
 }
