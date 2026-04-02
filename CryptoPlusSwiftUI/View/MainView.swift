@@ -9,42 +9,96 @@ import SwiftUI
 
 struct MainView: View {
     
-    @ObservedObject var cyrptoListViewModel : CryptoListViewModel
-    init() {
-        self.cyrptoListViewModel = CryptoListViewModel()
-        
-    }
-    
+    @StateObject var cyrptoListViewModel = CryptoListViewModel()
     
     var body: some View {
-        NavigationView {
-            
-            List(cyrptoListViewModel.cryptoList,id: \.id) { crypto in
-                VStack {
-                    Text(crypto.currency)
-                        .font(.title3)
-                        .foregroundColor(.blue)
-                        .frame(maxWidth: .infinity,alignment: .leading)
-                    Text(crypto.price)
-                        .foregroundStyle(.black)
-                        .frame(maxWidth: .infinity,alignment: .leading)
-                }
-            }.toolbar(content: {
-                Button {
-                   
-                    Task.init {
+        NavigationStack {
+            ZStack {
+                
+                
+                LinearGradient(
+                    gradient: Gradient(colors: [.black, .blue.opacity(0.7)]),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .ignoresSafeArea()
+                
+                ScrollView {
+                    VStack(spacing: 16) {
                         
-                        await cyrptoListViewModel.downloadCryptoAsync(url: URL(string: "https://raw.githubusercontent.com/atilsamancioglu/K21-JSONDataSet/master/crypto.json")!)
+                        ForEach(cyrptoListViewModel.cryptoList, id: \.id) { crypto in
+                            
+                            CryptoCardView(crypto: crypto)
+                        }
                     }
-                } label: {
-                    Text("Refresh")
+                    .padding()
                 }
-
-            }).navigationTitle(Text("Crypto Crazy"))
-        }.task {
-            await cyrptoListViewModel.downloadCryptoAsync(url: URL(string: "https://raw.githubusercontent.com/atilsamancioglu/K21-JSONDataSet/master/crypto.json")!)
+            }.toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    
+                    Button {
+                        Task {
+                            await cyrptoListViewModel.downloadCryptoAsync(
+                                url: URL(string: "https://raw.githubusercontent.com/atilsamancioglu/K21-JSONDataSet/master/crypto.json")!
+                            )
+                        }
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "arrow.clockwise")
+                            Text("Refresh")
+                        }
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                    }
+                }
+            }
+            .navigationTitle(Text("Crypto Plus"))
         }
-        
+        .task {
+            await cyrptoListViewModel.downloadCryptoAsync(
+                url: URL(string: "https://raw.githubusercontent.com/atilsamancioglu/K21-JSONDataSet/master/crypto.json")!
+            )
+        }
+    }
+}
+
+struct CryptoCardView: View {
+    
+    let crypto: CryptoViewModel
+    
+    var body: some View {
+        HStack {
+            
+            VStack(alignment: .leading, spacing: 8) {
+                Text(crypto.currency)
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                
+                Text("Cryptocurrency")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+            }
+            
+            Spacer()
+            
+            Text("$\(crypto.price)")
+                .font(.title3)
+                .fontWeight(.semibold)
+                .foregroundColor(.green)
+        }
+        .padding()
+        .background(
+            ZStack {
+               
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(.ultraThinMaterial)
+                
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(Color.white.opacity(0.2), lineWidth: 1)
+            }
+        )
+        .shadow(color: .black.opacity(0.5), radius: 10, x: 0, y: 5)
     }
 }
 
