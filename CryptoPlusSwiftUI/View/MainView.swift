@@ -8,14 +8,20 @@
 import SwiftUI
 
 struct MainView: View {
+    
+    @ObservedObject var cyrptoListViewModel : CryptoListViewModel
+    init() {
+        self.cyrptoListViewModel = CryptoListViewModel()
+        
+    }
+    
+    
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
+            
             Text("Hello, world!")
         }
-        .padding()
+        
     }
 }
 
