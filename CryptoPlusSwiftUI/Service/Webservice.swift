@@ -19,3 +19,9 @@ class Webservice {
     }
     
 }
+
+enum WebserviceError : Error {
+    case badURL
+    case noData
+    case dataParsingError
+}
