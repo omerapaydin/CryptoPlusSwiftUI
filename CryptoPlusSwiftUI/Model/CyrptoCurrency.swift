@@ -8,7 +8,7 @@
 import Foundation
 
 
-struct CyrptoCurrency : Decodable, Identifiable {
+struct CyrptoCurrency :  Decodable, Identifiable {
     
     let id = UUID()
     let currency : String
