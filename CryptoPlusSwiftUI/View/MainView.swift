@@ -17,9 +17,32 @@ struct MainView: View {
     
     
     var body: some View {
-        VStack {
+        NavigationView {
             
-            Text("Hello, world!")
+            List(cyrptoListViewModel.cryptoList,id: \.id) { crypto in
+                VStack {
+                    Text(crypto.currency)
+                        .font(.title3)
+                        .foregroundColor(.blue)
+                        .frame(maxWidth: .infinity,alignment: .leading)
+                    Text(crypto.price)
+                        .foregroundStyle(.black)
+                        .frame(maxWidth: .infinity,alignment: .leading)
+                }
+            }.toolbar(content: {
+                Button {
+                   
+                    Task.init {
+                        
+                        await cyrptoListViewModel.downloadCryptoAsync(url: URL(string: "https://raw.githubusercontent.com/atilsamancioglu/K21-JSONDataSet/master/crypto.json")!)
+                    }
+                } label: {
+                    Text("Refresh")
+                }
+
+            }).navigationTitle(Text("Crypto Crazy"))
+        }.task {
+            await cyrptoListViewModel.downloadCryptoAsync(url: URL(string: "https://raw.githubusercontent.com/atilsamancioglu/K21-JSONDataSet/master/crypto.json")!)
         }
         
     }
